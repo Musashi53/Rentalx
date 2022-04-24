@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createCategoryController } from "../modules/Cars/useCases/createCategory/index";
+import { listCategoryController } from "../modules/Cars/useCases/listCategories";
 
 const categoriesRoutes = Router();
 
@@ -8,7 +9,7 @@ categoriesRoutes.post("/", (request, response) => {
 });
 
 categoriesRoutes.get("/", (request, response) => {
-  const category = request.query;
+  listCategoryController.handle(request, response);
 });
 
 export { categoriesRoutes };
