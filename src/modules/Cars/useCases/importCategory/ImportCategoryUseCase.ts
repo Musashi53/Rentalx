@@ -1,5 +1,5 @@
 import fs from "fs";
-import { parse } from "csv-parse";
+import csvParse from "csv-parse";
 import { ICategoriesRepository } from "../../repositories/implementations/ICategoriesRepository";
 
 interface IImportCategory {
@@ -15,7 +15,7 @@ class ImportCategoryUseCase {
 
       const categories: IImportCategory[] = [];
 
-      const parseFile = parse();
+      const parseFile = csvParse();
 
       stream.pipe(parseFile);
 
@@ -25,6 +25,8 @@ class ImportCategoryUseCase {
           categories.push({ name, description });
         })
         .on("end", () => {
+          // Remove categoria
+          fs.promises.unlink(file.path);
           resolve(categories);
         })
         .on("error", (err) => {
@@ -40,6 +42,10 @@ class ImportCategoryUseCase {
       const { name, description } = category;
 
       const existsCategory = this.categoriesRepository.findByName(name);
+
+      if (!existsCategory) {
+        this.categoriesRepository.create({ name, description });
+      }
     });
   }
 }
